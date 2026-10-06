@@ -312,8 +312,3 @@ The original notebook is kept untouched; linters and pre-commit hooks exclude `*
 * Weather: Deutscher Wetterdienst (DWD) Climate Data Center, HOSTRADA hourly grids,
   <https://opendata.dwd.de/climate_environment/CDC/grids_germany/hourly/hostrada/>. Check DWD's terms
   of use before redistributing derived data.
-
-## License
-
-No license file has been added yet. Add one (for example MIT) before publishing if you want others
-to be able to reuse the code.
