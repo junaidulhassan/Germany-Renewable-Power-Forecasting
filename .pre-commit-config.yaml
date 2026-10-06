@@ -1,0 +1,21 @@
+# pip install pre-commit && pre-commit install
+# Notebooks are excluded everywhere: the original notebook is kept byte-for-byte as the
+# experiment record and must never be reformatted by a hook.
+exclude: '\.ipynb$'
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ["--maxkb=3000"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]

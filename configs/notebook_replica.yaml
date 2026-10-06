@@ -1,0 +1,20 @@
+extends: default.yaml
+
+paths:
+  interim_dir: data/interim_replica
+  runs_dir: artifacts/runs_replica
+  baselines_dir: artifacts/baselines_replica
+  reports_dir: reports/replica
+
+generation:
+  hourly_aggregation: instant
+  imputation: iterative
+
+split:
+  val_strategy: random
+
+targets:
+  solar:
+    scaling: {input: pixel_minmax, target: none}
+  wind:
+    scaling: {input: pixel_minmax, target: none}

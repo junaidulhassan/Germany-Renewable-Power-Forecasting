@@ -1,0 +1,95 @@
+# Default configuration. Run every command from the repository root.
+# Override single values from the CLI, e.g.:
+#   renewcast train --set targets.solar.training.epochs=3 --set split.val_strategy=random
+
+paths:
+  raw_generation: data/raw/generation/20200101-20241030-gen_per_prod_type.csv
+  weather_raw_dir: data/raw/weather
+  interim_dir: data/interim
+  processed_dir: data/processed
+  runs_dir: artifacts/runs
+  baselines_dir: artifacts/baselines
+  reports_dir: reports
+
+weather:
+  base_url: https://opendata.dwd.de/climate_environment/CDC/grids_germany/hourly/hostrada
+  file_stem: HOSTRADA-v1-0_BE_gn
+  downsample_factor: 2            # 938x720 grid -> 469x360
+  variables:                      # key = NetCDF variable name = file prefix
+    rsds:
+      directory: radiation_downwelling   # verify against the DWD index if downloads return 404
+      label: Surface downwelling shortwave radiation
+      units: W m-2
+    sfcWind:
+      directory: wind_speed              # verify against the DWD index if downloads return 404
+      label: Near-surface wind speed
+      units: m s-1
+    sfcWind_direction:
+      directory: wind_direction          # confirmed by the original notebook
+      label: Near-surface wind direction
+      units: degrees
+
+download:
+  variables: [rsds, sfcWind, sfcWind_direction]   # direction is only used for the EDA map
+  timeout_s: 120
+  max_retries: 3
+  workers: 4
+  skip_existing: true
+
+generation:
+  timestamp_column: MTU
+  source_timezone: Europe/Berlin   # ENTSO-E stamps are local time; HOSTRADA is UTC
+  hourly_aggregation: mean         # "instant" reproduces the notebook (value stamped on the hour)
+  imputation: interpolate          # "iterative" reproduces the notebook (IterativeImputer)
+
+split:
+  train_years: [2023]
+  test_years: [2024]
+  val_strategy: blocked            # "random" reproduces the notebook's shuffled 90/10 split
+  val_fraction: 0.1
+  block_hours: 168                 # one week
+  gap_hours: 24
+  seed: 42
+
+targets:
+  solar:
+    display_name: Solar power
+    weather_variable: rsds
+    generation_columns: [solar]
+    unit: MW
+    model: {architecture: baseline, filters: [32, 64], dense_units: 128, dropout: 0.5}
+    scaling: {input: pixel_minmax, target: standard}
+    training:
+      epochs: 15
+      patience: 3
+      batch_size: 32
+      learning_rate: 0.001
+      loss: mse
+  wind:
+    display_name: Wind power (onshore + offshore)
+    weather_variable: sfcWind
+    generation_columns: [wind_onshore, wind_offshore]
+    unit: MW
+    model: {architecture: baseline, filters: [32, 64], dense_units: 128, dropout: 0.5}
+    scaling: {input: pixel_minmax, target: standard}
+    training:
+      epochs: 50
+      patience: 5
+      batch_size: 32
+      learning_rate: 0.001
+      loss: mse
+
+evaluation:
+  batch_size: 64
+  clip_min_zero: true
+  forecast_window_hours: 300
+  display_timezone: Europe/Berlin
+
+eda:
+  map_time_index: 32
+  missing_values_year_filter: true
+
+runtime:
+  seed: 42
+  log_level: INFO
+  gpu_memory_growth: true

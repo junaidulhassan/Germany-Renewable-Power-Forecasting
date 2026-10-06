@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Data is large and re-creatable (see data/README.md); only the README is tracked.
+data/*
+!data/README.md
+
+# Model runs and generated reports (curated figures live in docs/)
+artifacts/
+reports/
+
+# Model weights and TensorBoard logs
+*.keras
+*.h5
+*.pkl
+events.out.tfevents.*
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env

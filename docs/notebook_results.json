@@ -1,0 +1,19 @@
+{
+  "solar": {
+    "validation_split": "random 10% of 2023 hours (shuffled)",
+    "r2": 0.9767,
+    "val_loss_mse": 2271742.0,
+    "val_mae_mw": 800.7885131835938,
+    "epochs_logged": 11,
+    "epochs_max": 15
+  },
+  "wind": {
+    "validation_split": "random 10% of 2023 hours (shuffled)",
+    "r2": 0.9559,
+    "val_loss_mse": 5287864.0,
+    "val_mae_mw": 1685.572998046875,
+    "epochs_logged": 50,
+    "epochs_max": 50
+  },
+  "model_total_params": 82922113
+}

@@ -1,0 +1,11 @@
+.git
+.venv
+data
+artifacts
+reports
+docs
+tests
+*.ipynb
+*.csv
+__pycache__
+*.egg-info

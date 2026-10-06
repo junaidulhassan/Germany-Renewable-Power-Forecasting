@@ -1,0 +1,28 @@
+# Tiny end-to-end configuration to check that the pipeline works on a modest machine before
+# committing to a full GPU run: compact model, 8x coarser grid, a subset of hours, two epochs.
+# It downloads the full set of monthly files for 2023-2024, but nothing else is large.
+#
+#   renewcast run-all -c configs/smoke_test.yaml --skip eda
+
+extends: default.yaml
+
+paths:
+  interim_dir: data/interim_smoke
+  processed_dir: data/processed_smoke
+  runs_dir: artifacts/runs_smoke
+  baselines_dir: artifacts/baselines_smoke
+  reports_dir: reports/smoke
+
+weather:
+  downsample_factor: 8            # 938x720 -> 118x90
+
+download:
+  variables: [rsds, sfcWind]
+
+targets:
+  solar:
+    model: {architecture: compact, filters: [8, 16, 32]}
+    training: {epochs: 2, patience: 1, batch_size: 16, max_train_samples: 500, workers: 1}
+  wind:
+    model: {architecture: compact, filters: [8, 16, 32]}
+    training: {epochs: 2, patience: 1, batch_size: 16, max_train_samples: 500, workers: 1}
